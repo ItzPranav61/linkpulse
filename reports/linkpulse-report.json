@@ -1,0 +1,52 @@
+[
+  {
+    "original_url": "https://example.com",
+    "final_url": "https://example.com/",
+    "status_code": 200,
+    "reachable": true,
+    "response_time_ms": 408,
+    "redirect_count": 0,
+    "error_type": null,
+    "checked_at": "2026-06-05T08:27:19.905Z"
+  },
+  {
+    "original_url": "http://github.com",
+    "final_url": "https://github.com/",
+    "status_code": 200,
+    "reachable": true,
+    "response_time_ms": 637,
+    "redirect_count": 1,
+    "error_type": null,
+    "checked_at": "2026-06-05T08:27:20.315Z"
+  },
+  {
+    "original_url": "https://example.com/not-found",
+    "final_url": "https://example.com/not-found",
+    "status_code": 404,
+    "reachable": false,
+    "response_time_ms": 22,
+    "redirect_count": 0,
+    "error_type": "http_error",
+    "checked_at": "2026-06-05T08:27:20.952Z"
+  },
+  {
+    "original_url": "not-a-url",
+    "final_url": null,
+    "status_code": null,
+    "reachable": false,
+    "response_time_ms": 0,
+    "redirect_count": 0,
+    "error_type": "invalid_url",
+    "checked_at": "2026-06-05T08:27:20.974Z"
+  },
+  {
+    "original_url": "https://this-domain-should-not-exist-linkpulse.test",
+    "final_url": "https://this-domain-should-not-exist-linkpulse.test/",
+    "status_code": null,
+    "reachable": false,
+    "response_time_ms": 29,
+    "redirect_count": 0,
+    "error_type": "dns_error",
+    "checked_at": "2026-06-05T08:27:20.974Z"
+  }
+]

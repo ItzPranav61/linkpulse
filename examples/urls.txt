@@ -1,0 +1,6 @@
+# LinkPulse sample URLs
+https://example.com
+http://github.com
+https://example.com/not-found
+not-a-url
+https://this-domain-should-not-exist-linkpulse.test

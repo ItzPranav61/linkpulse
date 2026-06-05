@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { checkUrl } from "./checkUrl.js";
+import { writeReports } from "./report.js";
+import type { UrlCheckResult } from "./types.js";
+
+async function main(): Promise<void> {
+  const inputPath = process.argv[2];
+
+  if (!inputPath) {
+    console.error("Please provide an input file path.");
+    console.error("Example: npm run check -- examples/urls.txt");
+    process.exitCode = 1;
+    return;
+  }
+
+  let urls: string[];
+
+  try {
+    urls = await readUrlsFromFile(inputPath);
+  } catch (error) {
+    console.error(`Could not read input file: ${inputPath}`);
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+    return;
+  }
+
+  if (urls.length === 0) {
+    console.error("No URLs found. Add one URL per line, or use a CSV file with URLs.");
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`Checking ${urls.length} URL${urls.length === 1 ? "" : "s"}...\n`);
+
+  const results: UrlCheckResult[] = [];
+
+  for (const url of urls) {
+    results.push(await checkUrl(url));
+  }
+
+  printSummary(results);
+  printTable(results);
+
+  await writeReports(results);
+  console.log("\nReports written:");
+  console.log("- reports/linkpulse-report.json");
+  console.log("- reports/linkpulse-report.csv");
+}
+
+async function readUrlsFromFile(inputPath: string): Promise<string[]> {
+  const rawContent = await readFile(inputPath, "utf8");
+  const extension = path.extname(inputPath).toLowerCase();
+
+  if (extension === ".csv") {
+    return parseCsvUrls(rawContent);
+  }
+
+  return rawContent
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+}
+
+function parseCsvUrls(rawContent: string): string[] {
+  const rows = rawContent
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+
+  if (rows.length === 0) {
+    return [];
+  }
+
+  const firstRow = parseSimpleCsvRow(rows[0]);
+  const urlColumnIndex = firstRow.findIndex((value) => value.toLowerCase() === "url");
+  const startIndex = urlColumnIndex >= 0 ? 1 : 0;
+  const columnIndex = urlColumnIndex >= 0 ? urlColumnIndex : 0;
+
+  return rows
+    .slice(startIndex)
+    .map((row) => parseSimpleCsvRow(row)[columnIndex]?.trim() ?? "")
+    .filter((url) => url.length > 0);
+}
+
+function parseSimpleCsvRow(row: string): string[] {
+  const values: string[] = [];
+  let current = "";
+  let insideQuotes = false;
+
+  for (let index = 0; index < row.length; index += 1) {
+    const char = row[index];
+    const nextChar = row[index + 1];
+
+    if (char === '"' && nextChar === '"') {
+      current += '"';
+      index += 1;
+      continue;
+    }
+
+    if (char === '"') {
+      insideQuotes = !insideQuotes;
+      continue;
+    }
+
+    if (char === "," && !insideQuotes) {
+      values.push(current);
+      current = "";
+      continue;
+    }
+
+    current += char;
+  }
+
+  values.push(current);
+  return values;
+}
+
+function printSummary(results: UrlCheckResult[]): void {
+  const total = results.length;
+  const reachable = results.filter((result) => result.reachable).length;
+  const redirected = results.filter((result) => result.redirect_count > 0).length;
+  const failed = total - reachable;
+  const averageResponseTime = Math.round(
+    results.reduce((sum, result) => sum + result.response_time_ms, 0) / total
+  );
+
+  console.log("Summary");
+  console.log(`Total checked: ${total}`);
+  console.log(`Reachable: ${reachable}`);
+  console.log(`Redirected: ${redirected}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Average response time: ${averageResponseTime}ms`);
+}
+
+function printTable(results: UrlCheckResult[]): void {
+  const rows = results.map((result) => ({
+    URL: truncate(result.original_url, 45),
+    Status: result.status_code === null ? "-" : String(result.status_code),
+    Reachable: result.reachable ? "yes" : "no",
+    Time: `${result.response_time_ms}ms`,
+    Error: result.error_type ?? "-"
+  }));
+
+  console.log("\nResults");
+  console.table(rows);
+}
+
+function truncate(value: string, maxLength: number): string {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 3)}...`;
+}
+
+main().catch((error) => {
+  console.error("Unexpected LinkPulse error:");
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+});
