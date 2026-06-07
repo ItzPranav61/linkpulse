@@ -1,6 +1,5 @@
 original_url,final_url,status_code,reachable,response_time_ms,redirect_count,error_type,checked_at
-https://example.com,https://example.com/,200,true,408,0,,2026-06-05T08:27:19.905Z
-http://github.com,https://github.com/,200,true,637,1,,2026-06-05T08:27:20.315Z
-https://example.com/not-found,https://example.com/not-found,404,false,22,0,http_error,2026-06-05T08:27:20.952Z
-not-a-url,,,false,0,0,invalid_url,2026-06-05T08:27:20.974Z
-https://this-domain-should-not-exist-linkpulse.test,https://this-domain-should-not-exist-linkpulse.test/,,false,29,0,dns_error,2026-06-05T08:27:20.974Z
+https://example.com,https://example.com/,200,true,549,0,,2026-06-07T13:36:16.210Z
+http://github.com,https://github.com/,200,true,374,1,,2026-06-07T13:36:16.761Z
+https://example.com/not-found,https://example.com/not-found,404,false,16,0,http_error,2026-06-07T13:36:17.135Z
+not-a-url,,,false,0,0,invalid_url,2026-06-07T13:36:17.151Z

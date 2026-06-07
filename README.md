@@ -47,6 +47,12 @@ Run against a text file:
 npm run check -- examples/urls.txt
 ```
 
+Run against a specific CSV column:
+
+```bash
+npm run check -- examples/dataset.csv -- --url-column image_url
+```
+
 Run directly from TypeScript during development:
 
 ```bash
@@ -55,7 +61,7 @@ npm run dev -- examples/urls.txt
 
 Text files should contain one URL per line. Empty lines and lines starting with `#` are ignored.
 
-CSV files are also supported in a simple form. If a header named `url` exists, LinkPulse reads that column. Otherwise, it reads the first column.
+CSV files are also supported in a simple form. If a header named `url` exists, LinkPulse reads that column. Otherwise, it reads the first column. For dataset-style CSV files, use `--url-column` to choose a named URL column.
 
 ## Sample Output
 

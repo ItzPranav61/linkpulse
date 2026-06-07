@@ -6,8 +6,24 @@ import { checkUrl } from "./checkUrl.js";
 import { writeReports } from "./report.js";
 import type { UrlCheckResult } from "./types.js";
 
+type CliOptions = {
+  inputPath: string | null;
+  urlColumn: string | null;
+};
+
 async function main(): Promise<void> {
-  const inputPath = process.argv[2];
+  let options: CliOptions;
+
+  try {
+    options = parseCliArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    console.error("Example: npm run check -- examples/dataset.csv -- --url-column image_url");
+    process.exitCode = 1;
+    return;
+  }
+
+  const { inputPath, urlColumn } = options;
 
   if (!inputPath) {
     console.error("Please provide an input file path.");
@@ -19,9 +35,9 @@ async function main(): Promise<void> {
   let urls: string[];
 
   try {
-    urls = await readUrlsFromFile(inputPath);
+    urls = await readUrlsFromFile(inputPath, urlColumn);
   } catch (error) {
-    console.error(`Could not read input file: ${inputPath}`);
+    console.error(`Could not load URLs from input file: ${inputPath}`);
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
     return;
@@ -50,12 +66,56 @@ async function main(): Promise<void> {
   console.log("- reports/linkpulse-report.csv");
 }
 
-async function readUrlsFromFile(inputPath: string): Promise<string[]> {
+function parseCliArgs(args: string[]): CliOptions {
+  const options: CliOptions = {
+    inputPath: null,
+    urlColumn: null
+  };
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+
+    if (arg === "--") {
+      continue;
+    }
+
+    if (arg === "--url-column") {
+      const value = args[index + 1];
+
+      if (!value || value.startsWith("--")) {
+        throw new Error("Missing value for --url-column.");
+      }
+
+      options.urlColumn = value;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--")) {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+
+    if (!options.inputPath) {
+      options.inputPath = arg;
+      continue;
+    }
+
+    throw new Error(`Unexpected argument: ${arg}`);
+  }
+
+  return options;
+}
+
+async function readUrlsFromFile(inputPath: string, urlColumn: string | null): Promise<string[]> {
   const rawContent = await readFile(inputPath, "utf8");
   const extension = path.extname(inputPath).toLowerCase();
 
+  if (urlColumn && extension !== ".csv") {
+    throw new Error("--url-column can only be used with .csv input files.");
+  }
+
   if (extension === ".csv") {
-    return parseCsvUrls(rawContent);
+    return parseCsvUrls(rawContent, urlColumn);
   }
 
   return rawContent
@@ -64,7 +124,7 @@ async function readUrlsFromFile(inputPath: string): Promise<string[]> {
     .filter((line) => line.length > 0 && !line.startsWith("#"));
 }
 
-function parseCsvUrls(rawContent: string): string[] {
+function parseCsvUrls(rawContent: string, urlColumn: string | null): string[] {
   const rows = rawContent
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -75,9 +135,24 @@ function parseCsvUrls(rawContent: string): string[] {
   }
 
   const firstRow = parseSimpleCsvRow(rows[0]);
-  const urlColumnIndex = firstRow.findIndex((value) => value.toLowerCase() === "url");
-  const startIndex = urlColumnIndex >= 0 ? 1 : 0;
-  const columnIndex = urlColumnIndex >= 0 ? urlColumnIndex : 0;
+
+  if (urlColumn) {
+    const header = firstRow.map((value) => value.trim());
+    const columnIndex = header.findIndex((value) => value === urlColumn);
+
+    if (columnIndex === -1) {
+      throw new Error(`CSV column not found: ${urlColumn}`);
+    }
+
+    return rows
+      .slice(1)
+      .map((row) => parseSimpleCsvRow(row)[columnIndex]?.trim() ?? "")
+      .filter((url) => url.length > 0);
+  }
+
+  const defaultUrlColumnIndex = firstRow.findIndex((value) => value.toLowerCase() === "url");
+  const startIndex = defaultUrlColumnIndex >= 0 ? 1 : 0;
+  const columnIndex = defaultUrlColumnIndex >= 0 ? defaultUrlColumnIndex : 0;
 
   return rows
     .slice(startIndex)
