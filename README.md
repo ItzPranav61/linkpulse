@@ -33,6 +33,61 @@ LinkPulse helps you quickly spot broken, redirected, or unreachable URLs before 
 npm install
 ```
 
+## Try It Yourself
+
+Prerequisites:
+
+- Node.js 18 or newer.
+- Git.
+
+Clone the project:
+
+```bash
+git clone https://github.com/ItzPranav61/linkpulse.git
+cd linkpulse
+```
+
+Install dependencies and build:
+
+```bash
+npm install
+npm run build
+```
+
+Run the text-file demo:
+
+```bash
+npm run check -- examples/urls.txt
+```
+
+Run the CSV column demo:
+
+```bash
+npm run check -- examples/dataset.csv -- --url-column image_url
+```
+
+Create your own `my-links.txt`:
+
+```text
+https://example.com
+https://github.com
+# comments are ignored
+not-a-url
+```
+
+Then run:
+
+```bash
+npm run check -- my-links.txt
+```
+
+Reports are generated in:
+
+```text
+reports/linkpulse-report.json
+reports/linkpulse-report.csv
+```
+
 ## Usage
 
 Build the CLI:
