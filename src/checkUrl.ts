@@ -16,6 +16,7 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
       original_url: originalUrl,
       final_url: null,
       status_code: null,
+      server_responded: false,
       reachable: false,
       response_time_ms: Date.now() - startedAt,
       redirect_count: 0,
@@ -29,6 +30,7 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
       original_url: originalUrl,
       final_url: currentUrl.toString(),
       status_code: null,
+      server_responded: false,
       reachable: false,
       response_time_ms: Date.now() - startedAt,
       redirect_count: 0,
@@ -73,10 +75,11 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
           original_url: originalUrl,
           final_url: currentUrl.toString(),
           status_code: statusCode,
+          server_responded: true,
           reachable,
           response_time_ms: Date.now() - startedAt,
           redirect_count: redirectCount,
-          error_type: reachable ? null : "http_error",
+          error_type: reachable ? null : classifyHttpStatus(response.status),
           checked_at: checkedAt
         };
       } finally {
@@ -88,6 +91,7 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
       original_url: originalUrl,
       final_url: currentUrl.toString(),
       status_code: statusCode,
+      server_responded: statusCode !== null,
       reachable: false,
       response_time_ms: Date.now() - startedAt,
       redirect_count: redirectCount,
@@ -99,6 +103,7 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
       original_url: originalUrl,
       final_url: currentUrl.toString(),
       status_code: statusCode,
+      server_responded: statusCode !== null,
       reachable: false,
       response_time_ms: Date.now() - startedAt,
       redirect_count: redirectCount,
@@ -110,6 +115,14 @@ export async function checkUrl(originalUrl: string): Promise<UrlCheckResult> {
 
 function isRedirect(statusCode: number): boolean {
   return statusCode >= 300 && statusCode < 400;
+}
+
+function classifyHttpStatus(statusCode: number): ErrorType {
+  if ([401, 403, 429].includes(statusCode)) {
+    return "access_blocked";
+  }
+
+  return "http_error";
 }
 
 function classifyError(error: unknown): ErrorType {

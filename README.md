@@ -162,6 +162,7 @@ URL                                           Status  Reachable  Time   Error
 https://example.com                           200     yes        120ms  -
 http://github.com                             301     yes        180ms  -
 https://example.com/not-found                 404     no         90ms   http_error
+https://chatgpt.com                           403     no         130ms  access_blocked
 not-a-url                                     -       no         0ms    invalid_url
 https://this-domain-should-not-exist...       -       no         900ms  dns_error
 ```
@@ -176,11 +177,12 @@ reports/linkpulse-report.csv
 ## Example CSV Report Preview
 
 ```csv
-original_url,final_url,status_code,reachable,response_time_ms,redirect_count,error_type,checked_at
-https://example.com,https://example.com/,200,true,120,0,,2026-06-05T08:13:14.673Z
-http://github.com,https://github.com/,200,true,180,1,,2026-06-05T08:13:14.860Z
-https://example.com/not-found,https://example.com/not-found,404,false,90,0,http_error,2026-06-05T08:13:14.949Z
-not-a-url,,,false,0,0,invalid_url,2026-06-05T08:13:14.969Z
+original_url,final_url,status_code,server_responded,reachable,response_time_ms,redirect_count,error_type,checked_at
+https://example.com,https://example.com/,200,true,true,120,0,,2026-06-05T08:13:14.673Z
+http://github.com,https://github.com/,200,true,true,180,1,,2026-06-05T08:13:14.860Z
+https://example.com/not-found,https://example.com/not-found,404,true,false,90,0,http_error,2026-06-05T08:13:14.949Z
+https://chatgpt.com,https://chatgpt.com/,403,true,false,130,0,access_blocked,2026-06-05T08:13:14.950Z
+not-a-url,,,false,false,0,0,invalid_url,2026-06-05T08:13:14.969Z
 ```
 
 ## Result Fields
@@ -188,11 +190,14 @@ not-a-url,,,false,0,0,invalid_url,2026-06-05T08:13:14.969Z
 - `original_url`: The URL exactly as it appeared in the input file.
 - `final_url`: The final URL after redirects, or `null` for invalid input.
 - `status_code`: The HTTP status code, or `null` if no response was received.
+- `server_responded`: `true` when an HTTP response was received, even if the status code is not reachable.
 - `reachable`: `true` for 2xx and 3xx responses, otherwise `false`.
 - `response_time_ms`: Total time spent checking the URL.
 - `redirect_count`: Number of redirects followed.
-- `error_type`: Failure reason, such as `dns_error`, `tls_error`, `timeout`, `http_error`, `invalid_url`, or `unknown_error`.
+- `error_type`: Failure reason, such as `dns_error`, `tls_error`, `timeout`, `access_blocked`, `http_error`, `invalid_url`, or `unknown_error`.
 - `checked_at`: ISO timestamp for when the check started.
+
+`access_blocked` means the server responded with `401`, `403`, or `429`. The URL may still work in a browser, but the site blocked unauthenticated, automated, or rate-limited access.
 
 ## What I Learned
 
@@ -208,6 +213,7 @@ not-a-url,,,false,0,0,invalid_url,2026-06-05T08:13:14.969Z
 - CSV support is intentionally simple and meant for basic files.
 - URLs are checked sequentially to keep the code beginner-readable.
 - Some sites may block automated requests or return different results based on region, TLS settings, or bot protection.
+- `401`, `403`, and `429` are reported as `access_blocked`, not necessarily as broken links.
 
 ## Future Improvements
 

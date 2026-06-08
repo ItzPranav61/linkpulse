@@ -22,6 +22,7 @@ function writeCsvReport(results: UrlCheckResult[], filePath: string): Promise<vo
     "original_url",
     "final_url",
     "status_code",
+    "server_responded",
     "reachable",
     "response_time_ms",
     "redirect_count",
