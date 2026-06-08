@@ -49,6 +49,7 @@ async function main(): Promise<void> {
     return;
   }
 
+  printBanner();
   console.log(`Checking ${urls.length} URL${urls.length === 1 ? "" : "s"}...\n`);
 
   const results: UrlCheckResult[] = [];
@@ -208,6 +209,19 @@ function printSummary(results: UrlCheckResult[]): void {
   console.log(`Redirected: ${redirected}`);
   console.log(`Failed: ${failed}`);
   console.log(`Average response time: ${averageResponseTime}ms`);
+}
+
+function printBanner(): void {
+  console.log(String.raw`
+██╗     ██╗███╗   ██╗██╗  ██╗██████╗ ██╗   ██╗██╗     ███████╗███████╗
+██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██║   ██║██║     ██╔════╝██╔════╝
+██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝██║   ██║██║     ███████╗█████╗
+██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝
+███████╗██║██║ ╚████║██║  ██╗██║     ╚██████╔╝███████╗███████║███████╗
+╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝
+
+URL health checker for developers.
+`);
 }
 
 function printTable(results: UrlCheckResult[]): void {

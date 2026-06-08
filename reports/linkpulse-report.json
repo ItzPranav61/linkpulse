@@ -4,30 +4,30 @@
     "final_url": "https://example.com/",
     "status_code": 200,
     "reachable": true,
-    "response_time_ms": 549,
+    "response_time_ms": 244,
     "redirect_count": 0,
     "error_type": null,
-    "checked_at": "2026-06-07T13:36:16.210Z"
+    "checked_at": "2026-06-08T07:36:50.759Z"
   },
   {
     "original_url": "http://github.com",
     "final_url": "https://github.com/",
-    "status_code": 200,
-    "reachable": true,
-    "response_time_ms": 374,
+    "status_code": 504,
+    "reachable": false,
+    "response_time_ms": 276,
     "redirect_count": 1,
-    "error_type": null,
-    "checked_at": "2026-06-07T13:36:16.761Z"
+    "error_type": "http_error",
+    "checked_at": "2026-06-08T07:36:51.005Z"
   },
   {
     "original_url": "https://example.com/not-found",
     "final_url": "https://example.com/not-found",
     "status_code": 404,
     "reachable": false,
-    "response_time_ms": 16,
+    "response_time_ms": 135,
     "redirect_count": 0,
     "error_type": "http_error",
-    "checked_at": "2026-06-07T13:36:17.135Z"
+    "checked_at": "2026-06-08T07:36:51.281Z"
   },
   {
     "original_url": "not-a-url",
@@ -37,6 +37,6 @@
     "response_time_ms": 0,
     "redirect_count": 0,
     "error_type": "invalid_url",
-    "checked_at": "2026-06-07T13:36:17.151Z"
+    "checked_at": "2026-06-08T07:36:51.416Z"
   }
 ]

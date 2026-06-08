@@ -118,6 +118,21 @@ Text files should contain one URL per line. Empty lines and lines starting with 
 
 CSV files are also supported in a simple form. If a header named `url` exists, LinkPulse reads that column. Otherwise, it reads the first column. For dataset-style CSV files, use `--url-column` to choose a named URL column.
 
+## Preview
+
+When LinkPulse runs, it prints a small CLI banner before the URL checks:
+
+```text
+██╗     ██╗███╗   ██╗██╗  ██╗██████╗ ██╗   ██╗██╗     ███████╗███████╗
+██║     ██║████╗  ██║██║ ██╔╝██╔══██╗██║   ██║██║     ██╔════╝██╔════╝
+██║     ██║██╔██╗ ██║█████╔╝ ██████╔╝██║   ██║██║     ███████╗█████╗
+██║     ██║██║╚██╗██║██╔═██╗ ██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝
+███████╗██║██║ ╚████║██║  ██╗██║     ╚██████╔╝███████╗███████║███████╗
+╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝
+
+URL health checker for developers.
+```
+
 ## Sample Output
 
 ```text

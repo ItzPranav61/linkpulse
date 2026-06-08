@@ -1,5 +1,5 @@
 original_url,final_url,status_code,reachable,response_time_ms,redirect_count,error_type,checked_at
-https://example.com,https://example.com/,200,true,549,0,,2026-06-07T13:36:16.210Z
-http://github.com,https://github.com/,200,true,374,1,,2026-06-07T13:36:16.761Z
-https://example.com/not-found,https://example.com/not-found,404,false,16,0,http_error,2026-06-07T13:36:17.135Z
-not-a-url,,,false,0,0,invalid_url,2026-06-07T13:36:17.151Z
+https://example.com,https://example.com/,200,true,244,0,,2026-06-08T07:36:50.759Z
+http://github.com,https://github.com/,504,false,276,1,http_error,2026-06-08T07:36:51.005Z
+https://example.com/not-found,https://example.com/not-found,404,false,135,0,http_error,2026-06-08T07:36:51.281Z
+not-a-url,,,false,0,0,invalid_url,2026-06-08T07:36:51.416Z
