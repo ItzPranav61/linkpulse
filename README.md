@@ -47,20 +47,32 @@ git clone https://github.com/ItzPranav61/linkpulse.git
 cd linkpulse
 ```
 
-Install dependencies and build:
+Install dependencies:
 
 ```bash
 npm install
-npm run build
 ```
 
-Run the text-file demo:
+Run the quick text-file demo:
 
 ```bash
+npm run demo
+```
+
+Run the CSV dataset demo:
+
+```bash
+npm run demo:csv
+```
+
+Manual commands, if you want the individual steps:
+
+```bash
+npm run build
 npm run check -- examples/urls.txt
 ```
 
-Run the CSV column demo:
+Manual CSV column check:
 
 ```bash
 npm run check -- examples/dataset.csv -- --url-column image_url

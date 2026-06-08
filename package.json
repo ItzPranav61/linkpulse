@@ -10,7 +10,9 @@
   "scripts": {
     "build": "tsc",
     "check": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "demo": "npm run build && npm run check -- examples/urls.txt",
+    "demo:csv": "npm run build && npm run check -- examples/dataset.csv -- --url-column image_url"
   },
   "keywords": [
     "cli",
